@@ -1,0 +1,66 @@
+/* Type: Archivo (heavy, expanded, tight) for display · Geist for text · Geist Mono for data · Ms Madi for the signature */
+:root{
+  --font-display:'Archivo','Helvetica Neue',Arial,sans-serif; /* @kind font */
+  --font-text:'Geist','Helvetica Neue',Arial,sans-serif; /* @kind font */
+  --font-mono:'Geist Mono',ui-monospace,'SFMono-Regular',Menlo,monospace; /* @kind font */
+  --font-signature:'Ms Madi',cursive; /* @kind font */
+  --display-weight:900; /* @kind other */
+  --display-stretch:112%; /* @kind other */
+  /* desktop scale */
+  --fs-display-1:clamp(88px,15.6vw,300px); /* @kind font */
+  --lh-display-1:.8; /* @kind other */
+  --ls-display-1:-.055em; /* @kind other */
+  --fs-display-2:128px; /* @kind font */
+  --lh-display-2:.86; /* @kind other */
+  --ls-display-2:-.05em; /* @kind other */
+  --fs-display-3:72px; /* @kind font */
+  --lh-display-3:.9; /* @kind other */
+  --ls-display-3:-.04em; /* @kind other */
+  --fs-statement:56px; /* @kind font */
+  --lh-statement:1.06; /* @kind other */
+  --ls-statement:-.03em; /* @kind other */
+  --fs-h1:40px; /* @kind font */
+  --lh-h1:1.08; /* @kind other */
+  --ls-h1:-.025em; /* @kind other */
+  --fs-h2:28px; /* @kind font */
+  --lh-h2:1.15; /* @kind other */
+  --ls-h2:-.015em; /* @kind other */
+  --fs-h3:20px; /* @kind font */
+  --lh-h3:1.25; /* @kind other */
+  --ls-h3:-.01em; /* @kind other */
+  --fs-body-l:19px; /* @kind font */
+  --lh-body-l:1.45; /* @kind other */
+  --fs-body:16px; /* @kind font */
+  --lh-body:1.5; /* @kind other */
+  --fs-small:14px; /* @kind font */
+  --lh-small:1.45; /* @kind other */
+  --fs-label:12px; /* @kind font */
+  --lh-label:1; /* @kind other */
+  --ls-label:.08em; /* @kind other */
+  --fs-mono:12px; /* @kind font */
+  --lh-mono:1.25; /* @kind other */
+  --ls-mono:.02em; /* @kind other */
+  --fs-mono-s:11px; /* @kind font */
+  --fs-counter:168px; /* @kind font */
+  --ls-counter:-.06em; /* @kind other */
+  --fs-signature:88px; /* @kind font */
+}
+@media (max-width:768px){
+:root{
+  --fs-display-1:clamp(56px,19vw,120px); /* @kind font */
+  --fs-display-2:60px; /* @kind font */
+  --fs-display-3:40px; /* @kind font */
+  --fs-statement:30px; /* @kind font */
+  --fs-h1:28px; /* @kind font */
+  --fs-h2:22px; /* @kind font */
+  --fs-h3:18px; /* @kind font */
+  --fs-body-l:17px; /* @kind font */
+  --fs-body:15px; /* @kind font */
+  --fs-small:13px; /* @kind font */
+  --fs-label:11px; /* @kind font */
+  --fs-mono:11px; /* @kind font */
+  --fs-mono-s:10px; /* @kind font */
+  --fs-counter:96px; /* @kind font */
+  --fs-signature:60px; /* @kind font */
+}
+}

@@ -1,0 +1,27 @@
+/* Motion: three named curves + duration scale. Everything is continuous; nothing hard-cuts. */
+:root{
+  --ease-glide:cubic-bezier(.16,1,.3,1); /* @kind other */   /* slow expo-out: reveals, image growth, landings */
+  --ease-snap:cubic-bezier(.32,.72,0,1); /* @kind other */   /* snappy UI: pills, toggles, panels, cursor label */
+  --ease-sweep:cubic-bezier(.76,0,.24,1); /* @kind other */  /* in-out: camera fly-in, page-to-page, loop footer */
+  --ease-linear:linear; /* @kind other */
+  --dur-instant:120ms; /* @kind other */
+  --dur-fast:240ms; /* @kind other */
+  --dur-base:420ms; /* @kind other */
+  --dur-slow:800ms; /* @kind other */
+  --dur-cinematic:1400ms; /* @kind other */
+  --dur-loader:3000ms; /* @kind other */
+  --stagger-letter:28ms; /* @kind other */
+  --stagger-line:80ms; /* @kind other */
+  /* springs (for JS/R3F): stiffness / damping */
+  --spring-tilt:'170 / 18'; /* @kind other */
+  --spring-snap:'260 / 26'; /* @kind other */
+}
+@media (prefers-reduced-motion:reduce){
+:root{--dur-fast:1ms; /* @kind other */
+  --dur-base:1ms; /* @kind other */
+  --dur-slow:1ms; /* @kind other */
+  --dur-cinematic:1ms; /* @kind other */
+  --stagger-letter:0ms; /* @kind other */
+  --stagger-line:0ms; /* @kind other */
+}
+}

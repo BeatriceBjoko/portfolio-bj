@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta property="og:description" content="UX/UI & Front-end Developer based in Brussels. Selected works: Lume, Muse, VRB and more.">
+<meta property="og:image" content="assets/lume/key-visual.jpg">
+<meta name="theme-color" content="#0A0A0B">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Beatrice Bjoko — UX/UI &amp; Front-end Developer</title>
+<meta name="description" content="Portfolio of Beatrice Bjoko, UX/UI &amp; Front-end Developer based in Brussels.">
+<meta property="og:title" content="Beatrice Bjoko — UX/UI &amp; Front-end Developer">
+<link rel="stylesheet" href="ds/styles.css">
+<link rel="stylesheet" href="portfolio.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&amp;family=Great+Vibes&amp;family=Open+Sans:wght@400&amp;display=swap" rel="stylesheet">
+<style>html,body{margin:0;background:#0A0A0B;color:#F2F0EB}a{color:#F2F0EB}a:hover{color:#C8FF2E}</style>
+<script src="ds/ds_bundle.js"></script>
+<script src="content.js"></script>
+</helmet>
+<div style="position:fixed; inset:0; background:var(--bg, #0A0A0B)">
+<x-import component="Portfolio" from="./portfolio-app.jsx" always-intro="{{ alwaysIntro }}" hint-size="100%,100%" style="position: absolute; inset: 0"></x-import>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;alwaysIntro&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  renderVals() { return { alwaysIntro: this.props.alwaysIntro ?? false }; }
+}
+</script>
+</body>
+</html>
