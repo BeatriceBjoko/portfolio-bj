@@ -13,12 +13,12 @@
 const L = 'assets/lume/', M = 'assets/muse/', V = 'assets/vrb/';
 window.BB_CONTENT = window.BB_CONTENT || {};
 window.BB_CONTENT.projects = [
-  { id: 'lume', n: 1, title: 'Lume', type: 'Care app for informal carers — Final Work', tagline: 'Caring for someone you love shouldn’t be a solo job. Lume shares it with the whole circle.', role: 'UX/UI Design & Development', year: 2026, tone: 'verde',
+  { id: 'lume', n: 1, title: 'Lume', type: 'Care app for informal carers · Final Work', tagline: 'Caring for someone you love shouldn’t be a solo job. Lume shares it with the whole circle.', role: 'UX/UI Design & Development', year: 2026, tone: 'verde',
     cover: L + 'key-visual.jpg',
     tools: ['Figma', 'Photoshop', 'InDesign', 'React Native'],
     description: 'Lume turns caring for a loved one from a lonely task into a shared responsibility. A bilingual NL/FR app that brings the whole care circle together: one live agenda, safe medication checks and room for the carer’s own wellbeing.',
     awards: ['Impact Award', 'Jury Award', 'Mastermind Award'],
-    context: 'My bachelor’s Final Work 2025–2026 · Multimedia & Creative Technology, Erasmushogeschool Brussel',
+    context: 'My bachelor’s Final Work 2025/26 · Multimedia & Creative Technology, Erasmushogeschool Brussel',
     status: 'Currently preparing the release on the App Store and Google Play.',
     magazine: L + 'Lume-magazine-Beatrice-Bjoko.pdf',
     features: [
@@ -29,46 +29,45 @@ window.BB_CONTENT.projects = [
     ],
     chapters: [
       { layout: 'stats', title: 'Research',
-        text: 'Literature study, market and competitor analysis. Belgium counts one to two million informal carers, yet existing platforms like MijnGezondheid and Helena focus on medical records — not on the daily chaos of planning, tasks, medication and the carer’s own wellbeing. Three personas and a MoSCoW analysis kept the scope sharp.',
+        text: 'Literature study, market and competitor analysis. Belgium counts one to two million informal carers, yet existing platforms like MijnGezondheid and Helena focus on medical records, not on the daily chaos of planning, tasks, medication and the carer’s own wellbeing. Three personas and a MoSCoW analysis kept the scope sharp.',
         stats: [['1–2M', 'informal carers in Belgium'], ['42%', 'of Flemish adults gave informal care in 2025'], ['64k', 'students combine their studies with care']] },
       { layout: 'gallery', title: 'Wireframes',
-        text: 'Structure first, colour later. Grayscale wireframes for the core flows — create or join a care circle, sign up, scan medication — with one goal: keep cognitive load to an absolute minimum. Every interaction had to fit in under 30 seconds, in a waiting room or between two appointments.',
+        text: 'Structure first, colour later. Grayscale wireframes for the core flows (create or join a care circle, sign up, scan medication) with one goal: keep cognitive load to an absolute minimum. Every interaction had to fit in under 30 seconds, in a waiting room or between two appointments.',
         media: [
-          { src: L + 'wf-zorgkring.jpg', ratio: 172 / 377, cap: 'WF — Start your care circle' },
-          { src: L + 'wf-signup.png', ratio: 393 / 852, cap: 'WF — Create account' },
-          { src: L + 'wf-scan-not-ok.png', ratio: 393 / 852, cap: 'WF — Wrong medication' },
-          { src: L + 'ui-onboarding.png', ratio: 443 / 896, cap: 'UI — Onboarding' },
-          { src: L + 'ui-scan.png', ratio: 443 / 1089, cap: 'UI — Medication scan' }
+          { src: L + 'wf-signup.png', ratio: 393 / 852, cap: 'Wireframe · Create account' },
+          { src: L + 'wf-scan-not-ok.png', ratio: 393 / 852, cap: 'Wireframe · Wrong medication' },
+          { src: L + 'ui-onboarding.png', ratio: 443 / 896, cap: 'UI · Onboarding' },
+          { src: L + 'ui-scan.png', ratio: 443 / 1089, cap: 'UI · Medication scan' }
         ] },
       { layout: 'iter', title: 'Testing & iterations',
         text: 'I tested wireframes and mockups with three experts in informal care: Freya Ponteur (HOGENT), Pieter Vanreybrouck (Steunpunt Mantelzorg) and Karel Hermans (VIVEL). Their feedback led to a privacy-first medication module, one-tap export to Apple or Google Calendar, breathing exercises and an SOS button, simpler wording for older users and haptic feedback.',
-        before: { src: L + 'wf-zorgkring.jpg', ratio: 172 / 377, cap: 'Wireframe' },
+        before: { src: L + 'wf-zorgkring-hd.png', ratio: 1572 / 3408, cap: 'Wireframe' },
         after: { src: L + 'mockup-zorgkring.jpg', ratio: 896 / 1200, cap: 'Final' } },
       { layout: 'wide', title: 'Moodboard',
-        text: 'A care app doesn’t have to feel clinical. The moodboard moved from energetic and chaotic to softer and more accessible: more white space, soft inner glows, subtle transparency and glass — with one bold lime accent.',
-        media: [{ src: L + 'moodboard.jpg', ratio: 842 / 595, cap: 'Moodboard — glass, soft gradients, one lime accent' }] },
+        text: 'A care app doesn’t have to feel clinical. The moodboard moved from energetic and chaotic to softer and more accessible: more white space, soft inner glows, subtle transparency and glass, with one bold lime accent.',
+        media: [{ src: L + 'moodboard.jpg', ratio: 842 / 595, cap: 'Moodboard · glass, soft gradients, one lime accent' }] },
       { layout: 'trio', title: 'Final design',
-        text: 'The final UI keeps every screen to one clear task, with large touch targets and plain language — so a carer can act in seconds, even with one hand free.',
+        text: 'The final UI keeps every screen to one clear task, with large touch targets and plain language, so a carer can act in seconds, even with one hand free.',
         media: [
           { src: L + 'ui-onboarding.png', ratio: 443 / 896, cap: 'Onboarding' },
           { src: L + 'ui-scan.png', ratio: 443 / 1089, cap: 'Medication scan' },
           { src: L + 'ui-login.png', ratio: 443 / 896, cap: 'Log in' }
         ] },
       { layout: 'grow', title: 'Build',
-        text: 'Designed in Figma and Photoshop, magazine in InDesign. Built with React Native + Expo — one codebase for iOS and Android — Reanimated and Skia for animation, and Firebase for login, real-time sync, cloud functions and push notifications. Every scan is verified against 10,516 registered Belgian medicines.',
+        text: 'Designed in Figma and Photoshop, magazine in InDesign. Built with React Native + Expo (one codebase for iOS and Android), Reanimated and Skia for animation, and Firebase for login, real-time sync, cloud functions and push notifications. Every scan is verified against 10,516 registered Belgian medicines.',
         media: [{ src: L + 'mockup-zorgkring.jpg', cap: 'Start your care circle' }] }
     ] },
 
   { id: 'muse', n: 2, title: 'Muse', type: 'Emotion-driven museum ecosystem for WIELS', tagline: 'Your mood picks the tour. A museum visit that starts in the street and follows you inside.', role: 'UX/UI Design', year: 2025, tone: 'driftwave',
     cover: M + 'meta-glasses.jpg',
     tools: ['Figma', 'Kiosk', 'Smartphone', 'AR glasses'],
-    description: 'Muse reads your mood and turns it into a personal museum tour — before you even walk into WIELS. A cross-device ecosystem: an emotion kiosk in the street, a smartphone guide inside, and optional AR glasses on top.',
-    context: 'Design V · Erasmushogeschool Brussel, 2025–2026 · Brief: a personalised, low-threshold cross-device tour for a Brussels museum',
+    description: 'Muse reads your mood and turns it into a personal museum tour, before you even walk into WIELS. A cross-device ecosystem: an emotion kiosk in the street, a smartphone guide inside, and optional AR glasses on top.',
+    context: 'Design V · Erasmushogeschool Brussel, 2025/26 · Brief: a personalised, low-threshold cross-device tour for a Brussels museum',
     features: [
       ['EMO-Kiosk', 'A public screen at Brussel-Zuid that senses your mood (no identity recognition) and asks three quick questions.'],
-      ['Matchmaking', 'Emotion + experience level + taste become three mini-exhibitions: “this fits you — pick one”.'],
+      ['Matchmaking', 'Emotion + experience level + taste become three mini-exhibitions: “this fits you, pick one”.'],
       ['Muse app', 'Scan the QR and your profile, route and first-visit discount are waiting. Location-aware once you’re inside.'],
-      ['AR layer', 'Artist background, hidden details and colour psychology over each work — hands-free on Meta glasses.']
+      ['AR layer', 'Artist background, hidden details and colour psychology over each work, hands-free on Meta glasses.']
     ],
     chapters: [
       { layout: 'steps', title: 'Two personas',
@@ -85,29 +84,29 @@ window.BB_CONTENT.projects = [
           ['After', 'Your emotional art profile, favourite works, upcoming exhibitions and a moodboard you can share.']
         ] },
       { layout: 'iter', title: 'Wireframes',
-        text: 'Interactive wireframes in Figma, built straight from the user stories — architecture and navigation first, styling later. Tested with users my own age thinking aloud, then simplified where they hesitated.',
-        before: { src: M + 'wf-landing.png', ratio: 393 / 852, cap: 'Wireframe — Welcome' },
-        after: { src: M + 'mockup-welkom.png', ratio: 1500 / 1125, cap: 'Final — Welcome' } },
+        text: 'Interactive wireframes in Figma, built straight from the user stories: architecture and navigation first, styling later. Tested with users my own age thinking aloud, then simplified where they hesitated.',
+        before: { src: M + 'wf-landing.png', ratio: 393 / 852, cap: 'Wireframe · Welcome' },
+        after: { src: M + 'mockup-welkom.png', ratio: 1500 / 1125, cap: 'Final · Welcome' } },
       { layout: 'steps', title: 'Privacy by design',
         text: 'Emotion AI can feel invasive, so the visitor stays in control. No constant tracking: emotion is shared only when you choose to.',
         steps: [
           ['Opt-in scan', 'An optional selfie before the tour picks a matching thematic route.'],
-          ['Ask, don’t watch', 'On quiet moments the app asks “How did this work move you?” — answered with one emoji.'],
-          ['Patterns, not live', 'Behaviour is analysed afterwards as themes — which styles, colours and works you return to.']
+          ['Ask, don’t watch', 'On quiet moments the app asks “How did this work move you?” and you answer with one emoji.'],
+          ['Patterns, not live', 'Behaviour is analysed afterwards as themes: which styles, colours and works you return to.']
         ] },
       { layout: 'wide', title: 'Final design',
-        text: 'My own branding, apart from WIELS’ house style: bold editorial type, chromatic offsets and soft coral circles — expressive enough for Isabelle, playful enough for Jamal.',
+        text: 'My own branding, apart from WIELS’ house style: bold editorial type, chromatic offsets and soft coral circles. Expressive enough for Isabelle, playful enough for Jamal.',
         media: [
-          { src: M + 'mockup-ticket.png', ratio: 1500 / 1125, cap: 'App — ticket & mood route' },
-          { src: M + 'meta-glasses.jpg', ratio: 842 / 595, cap: 'Meta glasses — start screen' }
+          { src: M + 'mockup-ticket.png', ratio: 1500 / 1125, cap: 'App · ticket & mood route' },
+          { src: M + 'meta-glasses.jpg', ratio: 842 / 595, cap: 'Meta glasses · start screen' }
         ] }
     ] },
 
-  { id: 'vrb', n: 3, title: 'VRB', type: 'LINE recycling-rewards app · Internship Bangkok', tagline: 'Recycle, earn coins, treat yourself — all without leaving the chat app everyone already uses.', role: 'UX/UI Design', year: 2026, tone: 'verde',
+  { id: 'vrb', n: 3, title: 'VRB', type: 'LINE recycling-rewards app · Internship Bangkok', tagline: 'Recycle, earn coins, treat yourself, all without leaving the chat app everyone already uses.', role: 'UX/UI Design', year: 2026, tone: 'verde',
     cover: V + 'cover.jpg',
     tools: ['Figma', 'LINE OA Manager', 'Rich menu'],
-    description: 'A recycling app that lives inside LINE, Thailand’s everyday messenger. Residents upload proof of recycling, earn coins and swap them for real rewards — one system, three roles: customer, admin and store.',
-    context: 'Internship at LiveIn (TH) Co., Ltd. · Bangkok, 2025–2026 · Designed in an international team, with my mentor and the developer',
+    description: 'A recycling app that lives inside LINE, Thailand’s everyday messenger. Residents upload proof of recycling, earn coins and swap them for real rewards. One system, three roles: customer, admin and store.',
+    context: 'Internship at LiveIn (TH) Co., Ltd. · Bangkok, 2025/26 · Designed in an international team, with my mentor and the developer',
     features: [
       ['LINE login', 'No new app to install: users enter from the LINE rich menu and log in with their LINE account.'],
       ['Proof of recycling', 'Photo upload per bag, with plastic, glass, metal and paper sorted and counted.'],
@@ -147,7 +146,7 @@ window.BB_CONTENT.projects = [
         ] }
     ] },
 
-  { id: 'firebird', n: 4, title: 'Firebird', type: 'Parallax fairytale website + class portal · Front-end', tagline: 'A Russian fairytale you don’t read, you scroll through — layer by layer.', role: 'Design & Front-end Development', year: 2025, tone: 'driftwave',
+  { id: 'firebird', n: 4, title: 'Firebird', type: 'Parallax fairytale website + class portal · Front-end', tagline: 'A Russian fairytale you don’t read, you scroll through, layer by layer.', role: 'Design & Front-end Development', year: 2025, tone: 'driftwave',
     cover: 'https://i.ytimg.com/vi/4f4stmTZrkY/maxresdefault.jpg',
     tools: ['Figma', 'Photoshop', 'Adobe Firefly', 'React'],
     description: 'The Russian fairytale of the Firebird, told as you scroll. A one-page parallax website in React, plus a portal site that links the fairytale sites of every classmate.',
@@ -179,9 +178,9 @@ window.BB_CONTENT.projects = [
       { layout: 'wide', title: 'Storyboard',
         text: 'The whole site drawn as a comic first: every chapter on paper, with the interaction written next to it. Paper is the quickest way to test whether the flow tells the story.',
         media: [
-          { src: 'assets/firebird/storyboard-1.jpg', ratio: .75, cap: 'Storyboard 01 — intro & orchard' },
-          { src: 'assets/firebird/storyboard-2.jpg', ratio: .75, cap: 'Storyboard 02 — Firebird & Kashei' },
-          { src: 'assets/firebird/storyboard-3.jpg', ratio: .75, cap: 'Storyboard 03 — the ending' }
+          { src: 'assets/firebird/storyboard-1.jpg', ratio: .75, cap: 'Storyboard 01 · intro & orchard' },
+          { src: 'assets/firebird/storyboard-2.jpg', ratio: .75, cap: 'Storyboard 02 · Firebird & Kashei' },
+          { src: 'assets/firebird/storyboard-3.jpg', ratio: .75, cap: 'Storyboard 03 · the ending' }
         ] },
       { layout: 'palette', title: 'Style sheet',
         text: 'Warm fire colours against a deep teal night, a regal serif for titles and handwritten flourishes, as if the story comes from an old book.',
@@ -224,8 +223,8 @@ window.BB_CONTENT.projects = [
       { layout: 'wide', title: 'Stills',
         text: 'Bold type, fruit textures and soft pastel light: the brand feels fresh and playful.',
         media: [
-          { src: 'assets/eyecandy/frame-a.jpg', ratio: 1920 / 910, cap: 'Opening — Mellow juice' },
-          { src: 'assets/eyecandy/frame-b.jpg', ratio: 1920 / 910, cap: 'Product — Pure energy' }
+          { src: 'assets/eyecandy/frame-a.jpg', ratio: 1920 / 910, cap: 'Opening · Mellow juice' },
+          { src: 'assets/eyecandy/frame-b.jpg', ratio: 1920 / 910, cap: 'Product · Pure energy' }
         ] },
       { layout: 'steps', title: 'Stack',
         text: 'A lean, modern front-end stack, chosen for real-time 3D and smooth motion.',
@@ -241,12 +240,12 @@ window.BB_CONTENT.projects = [
     cover: 'assets/posters/ethio-ad.jpg',
     tools: ['Photoshop', 'Illustrator', 'InDesign'],
     description: 'Two posters that tell a story with as little text as possible. One advertising campaign carried from print to Instagram, and one poster for a social cause.',
-    context: 'Design courses · Erasmushogeschool Brussel, 2024–2025',
+    context: 'Design courses · Erasmushogeschool Brussel, 2024/25',
     links: [['Open the full ad (PDF)', 'assets/posters/ETHIO-advertising-campaign.pdf', 'arrow-up-right'], ['Inspiration board (PDF)', 'assets/posters/Inspiration-board-Duff.pdf', 'arrow-up-right']],
     chapters: [
-      { layout: 'wide', title: 'ETHIO — Vision for a fairer world',
+      { layout: 'wide', title: 'ETHIO · Vision for a fairer world',
         text: 'An advertising concept for a fictional product: an A4 ad with concept image, slogan, logo, product visual and website, plus an Instagram story teaser and carousel in the same visual language. The same look runs from offline to online; the social versions add motion.',
-        media: [{ src: 'assets/posters/ethio-ad.jpg', ratio: 2480 / 3508, cap: 'A4 advertisement — ETHIO' }] },
+        media: [{ src: 'assets/posters/ethio-ad.jpg', ratio: 2480 / 3508, cap: 'A4 advertisement · ETHIO' }] },
       { layout: 'steps', title: 'A poster for a cause',
         text: 'Design V brief: a poster for a fictional product that helps a known persona move an NGO’s mission forward. The message has to land without reading the text, so it’s told in one image, respectfully and without sensational visuals.',
         steps: [
@@ -271,10 +270,10 @@ window.BB_CONTENT.me = {
   ],
   skills: ['User research', 'User testing', 'Wireframing & prototyping', 'Interaction design', 'Figma', 'Photoshop', 'Illustrator', 'InDesign', 'JavaScript', 'React / React Native', 'Expo + Firebase', 'Three.js / R3F', 'GSAP'],
   experience: [
-    ['01 — 04 / 2026', 'LiveIn — Bangkok, Thailand', 'UX/UI Designer & Front-end Intern'],
-    ['2023 — 2026', 'Erasmushogeschool Brussel', 'BA Multimedia & Creative Technologies · magna cum laude · Final Work “Lume”: Jury, Impact and Mastermind Awards'],
-    ['2021 — now', 'Hospitality', 'Customer service, working under pressure, teamwork at large events'],
-    ['2020 — 2023', 'Vrije Universiteit Brussel', 'Law']
+    ['01 → 04 / 2026', 'LiveIn · Bangkok, Thailand', 'UX/UI Designer & Front-end Intern'],
+    ['2023 → 2026', 'Erasmushogeschool Brussel', 'BA Multimedia & Creative Technologies · magna cum laude · Final Work “Lume”: Jury, Impact and Mastermind Awards'],
+    ['2021 → now', 'Hospitality', 'Customer service, working under pressure, teamwork at large events'],
+    ['2020 → 2023', 'Vrije Universiteit Brussel', 'Law']
   ]
 };
 })();

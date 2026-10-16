@@ -205,7 +205,7 @@ function Loader({ onDone, onReady, vw }) {
       <div className="bb-frame">
         <div className="bb-frame__slot bb-frame__tl"><Meta_L /></div>
         <div className="bb-frame__slot bb-frame__tr"><Meta_L time={false} coords /></div>
-        <div className="bb-frame__slot bb-frame__bl"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Loading portfolio — 2026 edition</span></div>
+        <div className="bb-frame__slot bb-frame__bl"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Loading portfolio · 2026 edition</span></div>
         <div className="bb-frame__slot bb-frame__br"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Click to skip</span></div>
       </div>
       <svg className="kit-loader__wire" width="420" height="420" viewBox="-210 -210 420 420" style={{ opacity: showPaper ? 0 : 1 }}>
@@ -245,16 +245,33 @@ function ArcView({ projects, onOpen, offset, setOffset, vw }) {
   const snapT = React.useRef();
   const lastRect = React.useRef(null);
   const clamp = v => Math.max(0, Math.min(projects.length - 1, v));
-  const nudge = v => { setOffset(o => clamp(o + v)); clearTimeout(snapT.current); snapT.current = setTimeout(() => setOffset(o => Math.round(o)), 220); };
+  // Rotation is eased in a rAF loop and written straight to the ring's transform;
+  // React state only changes when the active index changes (for the counter).
+  const ring = React.useRef(null), tgt = React.useRef(offset), curR = React.useRef(offset), shown = React.useRef(Math.round(offset));
+  React.useEffect(() => {
+    let raf, last = performance.now();
+    const loop = now => {
+      raf = requestAnimationFrame(loop);
+      const dt = Math.min(64, now - last); last = now;
+      const k = 1 - Math.pow(1 - .12, dt / 16.67);
+      curR.current += (tgt.current - curR.current) * k;
+      if (Math.abs(tgt.current - curR.current) < .0005) curR.current = tgt.current;
+      if (ring.current) ring.current.style.transform = 'translateZ(' + R + 'px) rotateY(' + (curR.current * step).toFixed(3) + 'deg)';
+      const r = Math.round(curR.current); if (r !== shown.current) { shown.current = r; setOffset(r); }
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, [R, step]);
+  const nudge = v => { tgt.current = clamp(tgt.current + v); clearTimeout(snapT.current); snapT.current = setTimeout(() => { tgt.current = Math.round(tgt.current); }, 160); };
   return (
     <div style={{ position: 'absolute', inset: 0 }} data-cursor="Drag"
-      onWheel={e => nudge((e.deltaY + e.deltaX) / 500)}
-      onPointerDown={e => { drag.current = { x: e.clientX, o: offset, moved: 0 }; }}
-      onPointerMove={e => { const d = drag.current; if (!d) return; const dx = e.clientX - d.x; d.moved = Math.max(d.moved, Math.abs(dx)); if (d.moved > 4) setOffset(clamp(d.o - dx / (mobile ? 220 : 380))); }}
-      onPointerUp={() => { const d = drag.current; drag.current = null; if (d && d.moved > 4) setOffset(o => Math.round(o)); }}
+      onWheel={e => nudge(Math.max(-.6, Math.min(.6, (e.deltaY + e.deltaX) / 600)))}
+      onPointerDown={e => { drag.current = { x: e.clientX, o: tgt.current, moved: 0 }; }}
+      onPointerMove={e => { const d = drag.current; if (!d) return; const dx = e.clientX - d.x; d.moved = Math.max(d.moved, Math.abs(dx)); if (d.moved > 4) tgt.current = clamp(d.o - dx / (mobile ? 220 : 380)); }}
+      onPointerUp={() => { const d = drag.current; drag.current = null; if (d && d.moved > 4) tgt.current = Math.round(tgt.current); }}
       onClickCapture={e => { if (drag.current && drag.current.moved > 4) e.stopPropagation(); }}>
       <div className="kit-arc">
-        <div className="kit-arc__ring" style={{ transform: 'translateZ(' + R + 'px) rotateY(' + (offset * step) + 'deg)' }}>
+        <div ref={ring} className="kit-arc__ring" style={{ transform: 'translateZ(' + R + 'px) rotateY(' + (curR.current * step) + 'deg)', willChange: 'transform' }}>
           {projects.map((p, i) => (
             <div key={p.id} className="kit-arc__item" onPointerDownCapture={e => { const c = e.currentTarget.querySelector('.bb-pcard'); lastRect.current = c ? c.getBoundingClientRect() : null; }} style={{ transform: 'rotateY(' + (-i * step) + 'deg) translateZ(' + (-R) + 'px) translate(' + (-w / 2) + 'px,' + (-h / 2) + 'px)' }}>
               <PC_P title={p.title} subtitle={p.type + ' · ' + p.year} index={String(p.n).padStart(2, '0') + ' / 06'} tone={p.tone} src={p.cover} width={w} height={h} bend={mobile ? 20 : 26} slices={mobile ? 10 : 14} onOpen={() => { const c = document.querySelectorAll('.kit-arc__item .bb-pcard')[projects.indexOf(p)]; onOpen(p, lastRect.current || (c && c.getBoundingClientRect())); }} />
@@ -274,7 +291,7 @@ function ListView({ projects, onOpen }) {
   return (
     <div className="kit-list" onPointerMove={e => setPos({ x: e.clientX, y: e.clientY })}>
       {projects.map(p => (
-        <div key={p.id} className="kit-list__row" onMouseEnter={() => setHov(p)} onMouseLeave={() => setHov(null)} onClick={e => open(p, e.currentTarget)} data-cursor="View" role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && open(p, e.currentTarget)}>
+        <div key={p.id} className="kit-list__row" onMouseEnter={() => setHov(p)} onMouseLeave={() => setHov(null)} onClick={e => open(p, e.currentTarget)} data-cursor="" role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && open(p, e.currentTarget)}>
           <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>{String(p.n).padStart(2, '0')}</span>
           <span className="kit-list__t">{p.title}</span>
           <span className="bb-small kit-hide-m" style={{ color: 'var(--text-muted)' }}>{p.type}</span>
@@ -491,6 +508,9 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
   const [clip, setClip] = React.useState(null);
   const [glOn] = React.useState(() => !!getSharedGL());
   const [shown, setShown] = React.useState(false);
+  const [music, setMusic] = React.useState(() => !!window.BB_MUSIC_ON);
+  const [musicUsed, setMusicUsed] = React.useState(() => !!window.BB_MUSIC_ON);
+  React.useEffect(() => { const f = e => { setMusic(!!e.detail); if (e.detail) setMusicUsed(true); }; window.addEventListener('bb-music', f); return () => window.removeEventListener('bb-music', f); }, []);
   const closing = React.useRef(false);
   const planesRef = React.useRef(null);
   React.useLayoutEffect(() => {
@@ -533,6 +553,7 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
       C.reveals = [...el.querySelectorAll('[data-reveal]:not(.is-in)')].map(r => { const pinned = r.closest('[data-pin]'); return { r, y: pinned ? offTop(pinned.parentElement) + Math.min(offTop(r) - offTop(pinned.parentElement), H * .5) : offTop(r) }; });
       C.chaps = [...el.querySelectorAll('[data-chapter]')].map(ch => ({ y: offTop(ch), lab: ch.dataset.chapter }));
       max = Math.max(0, content.current.scrollHeight - H);
+      C.gl = null;
     };
     const ro = new ResizeObserver(() => { recache(); planes && planes.resize(); });
     ro.observe(content.current);
@@ -541,17 +562,23 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
     el.querySelectorAll('[data-reveal]').forEach(r => r.classList.remove('is-in'));
     if (heroTitle.current) { heroTitle.current.classList.remove('cs-title--in'); requestAnimationFrame(() => heroTitle.current && heroTitle.current.classList.add('cs-title--in')); }
     recache();
+    // Titles re-render with new letters per project: drop cached node lists so every letter is animated.
+    [heroTitle, nextTitle].forEach(r => { if (r.current) r.current._ls = null; });
+    if (heroSide.current) heroSide.current._w = null;
+    if (nextTitle.current) nextTitle.current.querySelectorAll('.cs-ch-wrap').forEach(l => { l.style.opacity = 0; });
     s.vel = 0; s.pull = 0; s.lock = false;
-    if (land === 'end') { const nx = el.querySelector('.cs-next'); const y = nx ? Math.max(0, offTop(nx) - window.innerHeight * .35) : max; s.cur = s.target = Math.min(max, y); el.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('is-in')); }
+    // Coming back up from the next project: land on the frame where the "next" image is full-bleed,
+    // identical to the hero you just left, so the swap is invisible. Then you simply keep scrolling up.
+    if (land === 'end') { const P = C.pins.find(p => p.pin.parentElement.classList.contains('cs-next')); const y = P ? P.top + P.len * .985 : max; s.cur = s.target = Math.min(max, y); el.querySelectorAll('[data-reveal]').forEach(r => r.classList.add('is-in')); C.reveals = []; }
     else s.cur = s.target = 0;
 
     const H0 = () => window.innerHeight;
     // Clamp how far the target may run ahead of what's on screen, so a hard flick never "outruns" the page.
     const push = d => { const H = H0(); s.target = Math.max(0, Math.min(max, s.target + d)); s.target = Math.max(s.cur - H * .9, Math.min(s.cur + H * .9, s.target)); };
     const pullUp = d => {
-      if (viaRef.current !== 'loop' || s.target > 1 || d >= 0) { s.pull = Math.max(0, s.pull - 30); return; }
+      if (viaRef.current !== 'loop' || s.cur > 2 || d >= 0) { s.pull = Math.max(0, s.pull - 30); return; }
       s.pull += -d;
-      if (s.pull > 420 && !s.lock) { s.lock = true; jump(prevP, { land: 'end' }); }
+      if (s.pull > 200 && !s.lock) { s.lock = true; onNext(prevP, { land: 'end', via: 'loop' }); }
     };
     const onWheel = e => { e.preventDefault(); if (s.lock) return; const k = e.deltaMode === 1 ? 32 : e.deltaMode === 2 ? H0() : 1; const d = Math.max(-240, Math.min(240, e.deltaY * k)); pullUp(d); push(d); };
     const onTS = e => { touchY = e.touches[0].clientY; touchV = 0; };
@@ -646,15 +673,15 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
       if (pullHint.current) {
         const on = viaRef.current === 'loop' && cur < 40;
         pullHint.current.style.opacity = on ? 1 : 0;
-        pullHint.current.style.setProperty('--p', clamp01(s.pull / 420).toFixed(3));
+        pullHint.current.style.setProperty('--p', clamp01(s.pull / 200).toFixed(3));
         if (s.pull > 0 && !s.lock) s.pull = Math.max(0, s.pull - dt * .25);
       }
       if (chapLabel.current) {
-        let lab = '00 — Intro';
+        let lab = '00 · Intro';
         for (const ch of C.chaps) if (ch.y - cur < H * .5) lab = ch.lab;
         if (chapLabel.current.textContent !== lab) chapLabel.current.textContent = lab;
       }
-      if (planes) planes.draw(el.querySelectorAll('[data-gl]'), reduce ? 0 : -s.vel * 1.4, time, s.mouse);
+      if (planes) planes.draw(C.gl || (C.gl = [...el.querySelectorAll('[data-gl]')]), reduce ? 0 : -s.vel * 1.4, time, s.mouse);
     };
     raf = requestAnimationFrame(tick);
     return () => {
@@ -674,9 +701,9 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
       <div className="cs-chap__txt" data-reveal=""><span className="bb-label">{ch.title}</span><p className="bb-body-l">{ch.text}</p></div>
     </>
   );
-  const ytSrc = id => 'https://www.youtube-nocookie.com/embed/' + id + '?rel=0&modestbranding=1&playsinline=1';
+  const ytSrc = id => 'https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1&playsinline=1&origin=' + encodeURIComponent(location.origin);
   const renderChapter = (ch, i) => {
-    const tag = pad(i + 1) + ' — ' + ch.title;
+    const tag = pad(i + 1) + ' · ' + ch.title;
     const body = (() => {
       switch (ch.layout) {
         case 'stats': return <div className="cs-stats">{(ch.stats || []).map(([n, l], k) => <div key={k} className="cs-stat" data-reveal="" style={{ transitionDelay: (k * 90) + 'ms' }}><span className="cs-stat__n">{n}</span><span className="bb-mono cs-dim">{l}</span></div>)}</div>;
@@ -693,7 +720,7 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
             onMouseLeave={e => { const sh = e.currentTarget.querySelector('.cs-video__shield'); if (sh) sh.classList.remove('is-off'); }}>
             {ch.youtube
               ? <>
-                  <iframe src={ytSrc(ch.youtube)} title={project.title + ' — ' + ch.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen loading="lazy" />
+                  <iframe src={ytSrc(ch.youtube)} title={project.title + ': ' + ch.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" referrerPolicy="strict-origin-when-cross-origin" allowFullScreen loading="lazy" />
                   {/* The iframe swallows wheel events; this shield keeps the page scrolling until you click to play. */}
                   <button className="cs-video__shield" data-cursor="Play" aria-label={'Play ' + ch.title} onClick={e => { const sh = e.currentTarget, f = sh.parentElement.querySelector('iframe'); if (f && !f.dataset.played) { f.src = ytSrc(ch.youtube) + '&autoplay=1'; f.dataset.played = '1'; } sh.classList.add('is-off'); }}>
                     <span className="cs-video__play"><span className="bb-label">Play video</span></span>
@@ -722,7 +749,7 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
         <section key={i} className="cs-grow" data-chapter={tag}>
           <div className="cs-pin cs-grow__pin" data-pin="">
             <Plane innerRef={growBox} tone={m.src ? 'paper' : project.tone} src={m.src} className="cs-grow__box" still />
-            <div className="cs-grow__cap" data-reveal=""><span className="bb-label">{pad(i + 1)} — {ch.title}</span><p className="bb-body">{ch.text}</p></div>
+            <div className="cs-grow__cap" data-reveal=""><span className="bb-label">{pad(i + 1)} · {ch.title}</span><p className="bb-body">{ch.text}</p></div>
           </div>
         </section>
       );
@@ -735,12 +762,12 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
       <div ref={glHost} className="cs__glhost" aria-hidden="true" />
       <div className="cs__vp">
         <div ref={content} className="cs__content">
-          <section className="cs-hero" data-chapter="00 — Intro">
+          <section className="cs-hero" data-chapter="00 · Intro">
             <div className="cs-pin" data-pin="">
               <Plane innerRef={heroMedia} tone={project.tone} src={project.cover} className="cs-hero__media" bend="1" />
               <div className="cs-hero__scrim cs-hero__scrim--strong" />
               <div ref={heroSide} className="cs-side" style={{ opacity: 0 }}>
-                <span className="bb-mono cs-dim">{pad(project.n)} / {pad(list.length)} — {project.year}</span>
+                <span className="bb-mono cs-dim">{pad(project.n)} / {pad(list.length)} · {project.year}</span>
                 <span className="cs-side__t">{project.title}</span>
                 <p className="cs-side__p">{tag.split(' ').map((w, k) => <span key={k} className="cs-tw" style={{ opacity: .18 }}>{w} </span>)}</p>
                 <span className="bb-mono cs-dim">{project.role}</span>
@@ -782,19 +809,19 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
           </section>}
           {project.magazine && <section className="cs-mag" data-chapter="Magazine">
             <div data-reveal="" className="cs-mag__in">
-              <span className="bb-mono cs-dim">The full story — 21 pages</span>
-              <span className="cs-mag__t">Research, personas, MoSCoW, testing and documentation — all in the magazine.</span>
+              <span className="bb-mono cs-dim">The full story · 21 pages</span>
+              <span className="cs-mag__t">Research, personas, MoSCoW, testing and documentation: it’s all in the magazine.</span>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <Pill_C variant="paper" icon="download" href={project.magazine}>Download magazine</Pill_C>
-                <Pill_C variant="glass" icon="arrow-up-right" href={project.magazine}>Open in browser</Pill_C>
+                <Pill_C variant="paper" icon="arrow-up-right" href={project.magazine} target="_blank" rel="noopener">Open the magazine</Pill_C>
+                <Pill_C variant="glass" icon="download" href={project.magazine} download="Lume-magazine-Beatrice-Bjoko.pdf" target="_blank" rel="noopener">Download</Pill_C>
               </div>
             </div>
           </section>}
 
-          <section className="cs-next" data-chapter={'Next — ' + next.title}>
+          <section className="cs-next" data-chapter={'Next · ' + next.title}>
             <div className="cs-pin" data-pin="">
               <Plane innerRef={nextMedia} tone={next.tone} src={next.cover} className="cs-hero__media" bend="1" />
-              <div ref={nextLabel} className="cs-next__lab"><span className="bb-mono cs-dim">Next project — {pad(next.n)} / {pad(list.length)}</span><span className="bb-label">Keep scrolling ↓</span></div>
+              <div ref={nextLabel} className="cs-next__lab"><span className="bb-mono cs-dim">Next project · {pad(next.n)} / {pad(list.length)}</span><span className="bb-label">Keep scrolling ↓</span></div>
               <div className="cs-hero__scrim cs-hero__scrim--strong" />
               <SplitTitle innerRef={nextTitle} text={next.title} className="cs-title cs-title--static" />
             </div>
@@ -803,9 +830,12 @@ function CaseStudyView({ project, origin, onClose, onNext, land, via }) {
       </div>
 
       <div className="cs-ui">
-        <div className="cs-ui__tl"><span className="bb-label">{project.title}</span><span ref={chapLabel} className="bb-mono cs-dim">00 — Intro</span></div>
-        <div ref={pullHint} className="cs-pull" style={{ opacity: 0 }} aria-hidden="true"><span className="cs-pull__bar" /><span className="bb-mono">↑ Scroll up — back to {prevP.title}</span></div>
-        <div className="cs-ui__tr" data-cursor="Close"><RB_C icon="x" variant="glass" label="Close case study" onClick={close} /></div>
+        <div className="cs-ui__tl"><span className="bb-label">{project.title}</span><span ref={chapLabel} className="bb-mono cs-dim">00 · Intro</span></div>
+        <div ref={pullHint} className="cs-pull" style={{ opacity: 0 }} aria-hidden="true"><span className="cs-pull__bar" /><span className="bb-mono">↑ Scroll up to go back to {prevP.title}</span></div>
+        <div className="cs-ui__tr">
+          {musicUsed && <button className={'cs-mute' + (music ? ' cs-mute--on' : '')} onClick={() => window.BB_MUSIC_TOGGLE && window.BB_MUSIC_TOGGLE()} aria-pressed={!music} aria-label={music ? 'Mute music' : 'Play music'} data-cursor={music ? 'Mute' : 'Play'}>{music && <span className="kit-music__eq" aria-hidden="true"><i /><i /><i /><i /></span>}<span className="bb-mono">{music ? 'Mute' : 'Sound on'}</span></button>}
+          <div data-cursor="Close"><RB_C icon="x" variant="glass" label="Close case study" onClick={close} /></div>
+        </div>
         <div className="cs-ui__bar" aria-hidden="true"><span ref={bar} /></div>
         <nav className="cs-ui__nav" aria-label="Switch project">
           <div data-cursor={'View ' + prevP.title}><RB_C icon="arrow-left" variant="glass" label={'Previous project: ' + prevP.title} onClick={() => jump(prevP)} /></div>
@@ -919,9 +949,15 @@ function AboutScreen() {
   const scroller = React.useRef(null);
   React.useEffect(() => {
     const sc = scroller.current;
-    const on = () => sc.querySelectorAll('[data-reveal]:not(.is-in)').forEach(r => { if (r.getBoundingClientRect().top < window.innerHeight * .88) r.classList.add('is-in'); });
-    sc.addEventListener('scroll', on, { passive: true }); on();
-    return () => sc.removeEventListener('scroll', on);
+    // Only reveal while the page is actually showing (pages are pre-mounted hidden).
+    // Scroll-driven fill of the intro statement: words light up one by one as you scroll.
+    const ws = [...sc.querySelectorAll('.ab-w')];
+    const fill = () => { const p = Math.max(0, Math.min(1, sc.scrollTop / (window.innerHeight * .55))); const n = p * ws.length; ws.forEach((w, i) => { const o = (.14 + .86 * Math.max(0, Math.min(1, n - i))).toFixed(3); if (w._o !== o) { w.style.opacity = o; w._o = o; } }); };
+    sc.addEventListener('scroll', fill, { passive: true }); fill();
+    const on = () => { if (!sc.closest('.kit-page--on')) return; sc.querySelectorAll('[data-reveal]:not(.is-in)').forEach(r => { if (r.getBoundingClientRect().top < window.innerHeight * .88) r.classList.add('is-in'); }); };
+    const enter = e => { if (e.detail !== 'about') return; sc.scrollTop = 0; sc.querySelectorAll('[data-reveal]').forEach(r => r.classList.remove('is-in')); setTimeout(on, 60); };
+    sc.addEventListener('scroll', on, { passive: true }); window.addEventListener('bb-page', enter); on();
+    return () => { sc.removeEventListener('scroll', on); window.removeEventListener('bb-page', enter); };
   }, []);
   const city = me.city.split(',')[0];
   return (
@@ -932,45 +968,51 @@ function AboutScreen() {
             <span className="kit-line" style={{ '--i': 0 }}><span>Hi, I’m</span></span>
             <span className="kit-line" style={{ '--i': 1 }}><span>Beatrice</span></span>
           </h1>
-          <p className="bb-statement" style={{ margin: 0, maxWidth: '22em' }}>
-            <span className="kit-line" style={{ '--i': 2 }}><span>An enthusiastic UX/UI designer who also loves to code.</span></span>
-            <span className="kit-line dim" style={{ '--i': 3 }}><span>When I’m not in Figma you’ll find me doing sports or with music on way too loud. I love learning from the people around me, and I’m always up for the next challenge.</span></span>
+          {/* Words start faint and fill in one by one as you scroll (see AboutScreen effect). */}
+          <p className="bb-statement ab-stmt" style={{ margin: 0, maxWidth: '22em' }}>
+            {(() => {
+              const a = 'An enthusiastic UX/UI designer who also loves to code.'.split(' ');
+              const b = 'When I’m not in Figma you’ll find me doing sports or with music on way too loud. I love learning from the people around me, and I’m always up for the next challenge.'.split(' ');
+              return [...a.map(w => [w, false]), ...b.map(w => [w, true])].map(([w, dim], k) => (
+                <React.Fragment key={k}>{k === a.length && <br />}<span className={'ab-w' + (dim ? ' ab-w--dim' : '')}>{w}</span>{' '}</React.Fragment>
+              ));
+            })()}
           </p>
           <div className="ab2-meta">
             <div><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Based</span><span className="bb-mono">{city}, BE</span></div>
             <div><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Focus</span><span className="bb-mono">UX/UI · Front-end</span></div>
             <div><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Status</span><span className="bb-mono">Available ●</span></div>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}><Pill_A icon="download" href={me.cv || '#'}>Download CV</Pill_A></div>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}><Pill_A icon="download" href={me.cv || '#'} target="_blank" rel="noopener">Download CV</Pill_A></div>
         </div>
         <div className="ab2-portrait" data-cursor="Reveal">
           <DitherPortrait src={me.portrait} />
-          <span className="bb-mono ab2-portrait__tl">Portrait — {city}</span>
+          <span className="bb-mono ab2-portrait__tl">Portrait · {city}</span>
           <span className="bb-mono ab2-portrait__br">Move to lift the veil</span>
         </div>
       </section>
       <section className="ab-body">
         <div className="ab-block" data-reveal="">
-          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>01 — A few honest facts</span>
+          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>01 · A few honest facts</span>
           <div className="ab-facts">
             {[
               ['Law → layers', 'I started out studying law at the VUB. Turns out I’d rather argue for the user than in court.'],
               ['Hospitality-trained', 'Years of serving people taught me UX before I knew the word: read the room, stay calm, be fast.'],
               ['Brussels → Bangkok', 'I packed my laptop and designed a LINE app in Thailand, the first in my family to take a leap like that.'],
               ['Four languages', 'Dutch, French, English and Romanian. Figma and JavaScript don’t count, but I speak those too.']
-            ].map(([t, d], k) => <div key={t} className="ab-fact"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>{String(k + 1).padStart(2, '0')}</span><span className="bb-h3">{t}</span><span className="bb-body" style={{ color: 'var(--text-muted)' }}>{d}</span></div>)}
+            ].map(([t, d], k) => <div key={t} className="ab-fact" style={{ '--k': k }}><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>{String(k + 1).padStart(2, '0')}</span><span className="bb-h3">{t}</span><span className="bb-body" style={{ color: 'var(--text-muted)' }}>{d}</span></div>)}
           </div>
         </div>
         <div className="ab-block" data-reveal="">
-          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>02 — Skills & tools</span>
+          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>02 · Skills & tools</span>
           <div className="kit-skills">{me.skills.map(k => <Tag_A key={k}>{k}</Tag_A>)}</div>
         </div>
         {me.languages && <div className="ab-block" data-reveal="">
-          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>03 — Languages</span>
+          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>03 · Languages</span>
           <div className="kit-skills">{me.languages.map(k => <Tag_A key={k}>{k}</Tag_A>)}</div>
         </div>}
         <div className="ab-block" data-reveal="">
-          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>04 — Experience & education</span>
+          <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>04 · Experience & education</span>
           <div>{me.experience.map(([y, c, r]) => (
             <div key={c} className="kit-xp"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>{y}</span><span className="bb-h3">{c}</span><span className="bb-body" style={{ color: 'var(--text-muted)' }}>{r}</span></div>
           ))}</div>
@@ -1010,10 +1052,10 @@ function PerfectStop() {
     const W = stage.current.clientWidth, T = tile.current.offsetWidth;
     const off = Math.abs(S.x * (W - T) - (W - T) / 2);
     const score = Math.max(0, Math.round(100 - off / T * 100));
-    const msg = score >= 97 ? 'Pixel-perfect. You clearly care about details — let’s work together.'
+    const msg = score >= 97 ? 'Pixel-perfect. You clearly care about details. Let’s work together.'
       : score >= 85 ? 'So close. Designers call that “one more iteration”.'
       : score >= 60 ? 'Not bad at all. Again, a bit faster this time?'
-      : 'Oops — even the best flows need user testing. Try again!';
+      : 'Oops! Even the best flows need user testing. Try again.';
     setRes({ score, msg }); setRound(r => Math.min(r + 1, 8));
     if (score > best) { setBest(score); localStorage.setItem('bb-game-best', String(score)); }
   };
@@ -1025,7 +1067,7 @@ function PerfectStop() {
   return (
     <section className="ct-game" data-screen-label="Contact game">
       <div className="ct-game__head">
-        <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Mini game — round {String(round).padStart(2, '0')}</span>
+        <span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Mini game · round {String(round).padStart(2, '0')}</span>
         <h2 className="ct-game__t">Stop it at the right moment</h2>
         <p className="bb-body" style={{ margin: 0, color: 'var(--text-muted)', maxWidth: '34em' }}>Tap the stage (or press space) to freeze the cube right inside the outline. It gets faster every round.</p>
       </div>
@@ -1035,7 +1077,7 @@ function PerfectStop() {
         {!running && !res && <span className="bb-label ct-stage__cta">Tap to start</span>}
         {res && <div className="ct-stage__res" aria-live="polite"><span className="ct-score">{res.score}%</span><span className="bb-body">{res.msg}</span><span className="bb-label">Tap to play again</span></div>}
       </div>
-      <div className="ct-game__foot"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Best score — {best}%</span><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Score 97%+ and mention it in your email ●</span></div>
+      <div className="ct-game__foot"><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Best score · {best}%</span><span className="bb-mono" style={{ color: 'var(--text-muted)' }}>Score 97%+ and mention it in your email ●</span></div>
     </section>
   );
 }
@@ -1046,16 +1088,22 @@ function MusicToggle() {
   const [on, setOn] = React.useState(false);
   const frame = React.useRef(null), loaded = React.useRef(false);
   const cmd = f => frame.current && frame.current.contentWindow && frame.current.contentWindow.postMessage(JSON.stringify({ event: 'command', func: f, args: [] }), '*');
+  const onRef = React.useRef(on); onRef.current = on;
+  const toggleRef = React.useRef();
+  React.useEffect(() => { window.BB_MUSIC_ON = on; window.dispatchEvent(new CustomEvent('bb-music', { detail: on })); }, [on]);
+  React.useEffect(() => { window.BB_MUSIC_TOGGLE = () => toggleRef.current(); }, []);
   const toggle = () => {
-    if (!loaded.current) { loaded.current = true; frame.current.src = 'https://www.youtube-nocookie.com/embed/' + NIGHTCALL + '?autoplay=1&loop=1&playlist=' + NIGHTCALL + '&controls=0&enablejsapi=1&playsinline=1'; setOn(true); return; }
+    const on = onRef.current;
+    if (!loaded.current) { loaded.current = true; frame.current.src = 'https://www.youtube.com/embed/' + NIGHTCALL + '?autoplay=1&loop=1&playlist=' + NIGHTCALL + '&controls=0&enablejsapi=1&playsinline=1&origin=' + encodeURIComponent(location.origin); setOn(true); return; }
     cmd(on ? 'pauseVideo' : 'playVideo'); setOn(!on);
   };
+  toggleRef.current = toggle;
   return (
     <>
       <button className={'kit-music' + (on ? ' kit-music--on' : '')} onClick={toggle} aria-pressed={on} aria-label={on ? 'Pause music' : 'Play music: Nightcall by Kavinsky'} data-cursor={on ? 'Pause' : 'Play'}>
-        <span className="bb-mono kit-music__lab">{on ? 'Nightcall — Kavinsky' : 'Play music'}</span>
+        <span className="bb-mono kit-music__lab">{on ? 'Nightcall · Kavinsky' : 'Play music'}</span>
       </button>
-      <iframe ref={frame} className="kit-music__yt" title="Nightcall — Kavinsky" allow="autoplay; encrypted-media" tabIndex={-1} aria-hidden="true" />
+      <iframe ref={frame} className="kit-music__yt" title="Nightcall by Kavinsky" allow="autoplay; encrypted-media" referrerPolicy="strict-origin-when-cross-origin" tabIndex={-1} aria-hidden="true" />
     </>
   );
 }
@@ -1111,7 +1159,7 @@ function App() {
   const [page, setPage] = React.useState(() => (location.hash.match(/page=(\w+)/) || [])[1] || 'home');
   // Pages stay mounted once visited, and all are pre-mounted on idle after the intro, so switching never pays for a mount.
   const [mounted, setMounted] = React.useState(() => ({ [page]: true }));
-  React.useEffect(() => { setMounted(m => (m[page] ? m : { ...m, [page]: true })); }, [page]);
+  React.useEffect(() => { setMounted(m => (m[page] ? m : { ...m, [page]: true })); window.dispatchEvent(new CustomEvent('bb-page', { detail: page })); }, [page]);
   React.useEffect(() => { if (!homeOn) return; const all = () => setMounted({ home: true, projects: true, about: true, contact: true }); const id = window.requestIdleCallback ? requestIdleCallback(all, { timeout: 3000 }) : setTimeout(all, 1500); return () => (window.cancelIdleCallback ? cancelIdleCallback(id) : clearTimeout(id)); }, [homeOn]);
   const [entering, setEntering] = React.useState(false);
   const [face, setFace] = React.useState(0);
@@ -1152,7 +1200,7 @@ function App() {
       <CF current={page === 'home' ? undefined : page} onHome={() => go('home')} onNavigate={go}
         topRight={mobile ? <MB open={menu} onClick={() => setMenu(true)} /> : undefined}
         bottomLeft={mobile ? (page === 'home' ? null : undefined) : undefined}
-        bottomCenter={page === 'home' ? <Counter_App current={face + 1} total={4} label={'— ' + f.name} /> : null}
+        bottomCenter={page === 'home' ? <Counter_App current={face + 1} total={4} label={f.name} /> : null}
         bottomRight={mobile && page === 'home' ? null : undefined} />
       {cs && <CaseStudyView key="cs" project={cs.project} origin={cs.origin} onClose={() => setCs(null)} land={cs.land} via={cs.via} onNext={(n, o) => setCs(c => ({ ...c, project: n, land: o && o.land, via: o && o.via }))} />}
       {mobile && <MM open={menu} onClose={() => setMenu(false)} onNavigate={go} current={page} />}
